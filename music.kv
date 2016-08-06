@@ -1,0 +1,116 @@
+#:import randint random.randint
+
+<MusicButton>:
+
+<AnimWidget>:
+    canvas:
+        BorderImage:
+            border:(0,18,0,18)
+            pos: self.pos
+            size: (50,50)
+            source: self.image
+
+<MusicLabel@Label>:
+    size_hint: 1, 0.1
+    size: self.texture_size
+    font_size: 18
+    font_name: 'Roboto'
+    markup: True
+
+<MusicToggleButton>:
+    size_hint: (1, 1)
+    size: (50,50)
+    group: 'play_options'
+    
+    canvas:
+        Color:
+            rgb: 1, 1, 1
+        BorderImage:
+            border: (0,0,0,0)
+            pos: root.pos
+            size: root.size
+            source: self.image
+    Label:
+        pos: root.pos
+        size: root.size
+        text: root.text    
+
+<VolumeSlider@Slider>:
+    id: slider
+    canvas:
+        Color:
+            rgb: 1, 1, 1
+        BorderImage:
+            border: (0, 0, 0, 0) if self.orientation == 'horizontal' else (0, 0, 0, 0)
+            pos: (self.x, self.center_y - 18) if self.orientation == 'horizontal' else (self.center_x - 18, self.y)
+            size: (self.width, 37) if self.orientation == "horizontal" else (37, self.height)
+            source: slider.sliderbackground
+        Rectangle:
+            pos: (self.value_pos[0] - 16, self.center_y - 17) if self.orientation == 'horizontal' else (self.center_x - 16, self.value_pos[1] - 16)
+            size: (32,32)
+            source: slider.sliderknob
+            
+<MusicLayout>:
+    id: musiclayout
+    orientation: 'vertical'
+    canvas.before:
+        BorderImage:
+            border: (0,0, 0, 0)
+            pos: self.pos
+            size: self.size
+            source: musiclayout.background_image
+    AnimLayout:
+    BoxLayout:
+        orientation: 'horizontal'
+        MusicLabel:
+            id: currentLabel
+            text: "[b]Current:[/b][i] Song [/i]"
+    BoxLayout:
+        Label:
+        MusicButton:
+            id: playbtn
+            text: "Play"
+            on_press: musiclayout.play()
+        MusicButton:
+            id: pausebtn
+            text: "Pause"
+            on_press: musiclayout.pause()
+        MusicButton:
+            id: stopbtn
+            text: "Stop"
+            on_press: musiclayout.stop()
+        MusicButton:
+            id: previousbtn
+            text: "Previous"
+            on_press: musiclayout.change_song(-1)
+        MusicButton:
+            id: nextbtn
+            text: "Next" 
+            on_press: musiclayout.change_song(1)
+        Label:
+    BoxLayout:
+        Label:
+            text: "[i]Volume[/i]"
+            font_size: 20
+            markup: True
+        VolumeSlider:
+            id: volumeSlider
+            min: 0
+            max: 100
+            value: 50
+            on_value: musiclayout.change_volume()
+        Label:
+            text: "[i] {} [/i]" .format(str(int(volumeSlider.value)))
+            font_size: 20
+            markup: True
+    BoxLayout:
+        Label:
+        MusicToggleButton:
+            id: shuffle_toggle
+            text: 'Shuffle'
+            on_state: musiclayout.toggle_shuffle()
+        MusicToggleButton:
+            id: repeat_toggle
+            text: 'Repeat'
+            on_state: musiclayout.toggle_repeat()
+        Label:
